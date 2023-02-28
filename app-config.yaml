@@ -20,19 +20,35 @@ app:
           - url: https://discord.gg/MUpMjP2
             title: '#backstage'
 
+permission:
+  enabled: true
+
 backend:
   # Used for enabling authentication, secret is shared by all backend plugins
   # See https://backstage.io/docs/tutorials/backend-to-backend-auth for
   # information on the format
-  # auth:
-  #   keys:
-  #     - secret: ${BACKEND_SECRET}
+  auth:
+    keys:
+      - secret: ${BACKEND_SECRET} # ------
   baseUrl: http://localhost:7007
   listen:
     port: 7007
   database:
-    client: better-sqlite3
-    connection: ':memory:'
+    # client: better-sqlite3
+    # connection: ':memory:'
+    # config options: https://node-postgres.com/api/client
+    client: pg
+    connection:
+      host: 127.0.0.1 #${POSTGRES_HOST}
+      port: 5432 #${POSTGRES_PORT}
+      user: postgres #${POSTGRES_USER}
+      password: "1234" #${POSTGRES_PASSWORD}
+      # https://node-postgres.com/features/ssl
+      # you can set the sslmode configuration option via the `PGSSLMODE` environment variable
+      # see https://www.postgresql.org/docs/current/libpq-ssl.html Table 33.1. SSL Mode Descriptions (e.g. require)
+      # ssl:
+      #   ca: # if you have a CA file and want to verify it you can uncomment this section
+      #     $file: <file-path>/ca/server.crt
   cache:
     store: memory
   cors:
@@ -218,6 +234,8 @@ catalog:
         - System
         - Domain
         - Location
+        - Group
+        - User
 
   processors:
     ldapOrg:
@@ -241,8 +259,10 @@ catalog:
   locations:
     # Add a location here to ingest it, for example from a URL:
     #
-    #     - type: url
-    #       target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
+    - type: url
+      target: https://github.com/guyyaakov1/backstage/blob/master/usertest.yml
+      rules:
+        - allow: [User, Group, Resource, API, System, Component]
     #
     # For local development you can use a file location instead:
     #
@@ -303,8 +323,8 @@ auth:
         clientSecret: ${AUTH_GOOGLE_CLIENT_SECRET}
     github:
       development:
-        clientId: ${AUTH_GITHUB_CLIENT_ID}
-        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+        clientId: ${AUTH_GITHUB_CLIENT_ID} # ------
+        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET} # ------
         enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
     gitlab:
       development:
@@ -441,5 +461,3 @@ apacheAirflow:
 gocd:
   baseUrl: https://your.gocd.instance.com
 
-permission:
-  enabled: true

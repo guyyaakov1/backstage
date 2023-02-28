@@ -19,10 +19,13 @@ import { createRouter } from '@backstage/plugin-permission-backend';
 import {
   AuthorizeResult,
   PolicyDecision,
+  isPermission,
+  isResourcePermission,
 } from '@backstage/plugin-permission-common';
 import {
   PermissionPolicy,
   PolicyQuery,
+  PolicyAuthorizeQuery,
 } from '@backstage/plugin-permission-node';
 import {
   DefaultPlaylistPermissionPolicy,
@@ -30,24 +33,62 @@ import {
 } from '@backstage/plugin-playlist-backend';
 import { Router } from 'express';
 import { PluginEnvironment } from '../types';
+import {
+  catalogConditions,
+  createCatalogConditionalDecision,
+} from '@backstage/plugin-catalog-backend';
+import {
+  catalogEntityDeletePermission,
+} from '@backstage/plugin-catalog-common';
 
 class ExamplePermissionPolicy implements PermissionPolicy {
-  private playlistPermissionPolicy = new DefaultPlaylistPermissionPolicy();
-
+  // private playlistPermissionPolicy = new DefaultPlaylistPermissionPolicy();
+  
   async handle(
-    request: PolicyQuery,
-    user?: BackstageIdentityResponse,
-  ): Promise<PolicyDecision> {
-    if (isPlaylistPermission(request.permission)) {
-      return this.playlistPermissionPolicy.handle(request, user);
-    }
+      request: PolicyQuery,
+      user?: BackstageIdentityResponse,
+     ): Promise<PolicyDecision> {
+      if (isPermission(request.permission, catalogEntityDeletePermission)) {
+        return createCatalogConditionalDecision(
+          request.permission,
+          catalogConditions.isEntityOwner({
+            claims: user?.identity.ownershipEntityRefs ?? [],
+          }),
+        );
+      }
 
-    return {
-      result: AuthorizeResult.ALLOW,
-    };
+      return { result: AuthorizeResult.ALLOW };
+  // async handle(request: PolicyAuthorizeQuery, user?: BackstageIdentityResponse): Promise<PolicyDecision> {
+      
+  //   if (request.permission.name === 'catalog.entity.delete') {
+  //       return createCatalogConditionalDecision(
+  //         request.permission,
+  //         catalogConditions.isEntityOwner(
+  //           user?.identity.ownershipEntityRefs ?? []
+  //         )
+  //       );
+    
+  //   }
+    
+  //   return { result: AuthorizeResult.ALLOW };
+  // async handle(
+  //   request: PolicyQuery,
+  //   user?: BackstageIdentityResponse,
+  // ): Promise<PolicyDecision> {
+  //  if (isResourcePermission(request.permission, 'catalog-entity')) {
+  //     return createCatalogConditionalDecision(
+  //       request.permission,
+  //       catalogConditions.isEntityOwner({
+  //         claims: user?.identity.ownershipEntityRefs ?? [],
+  //       }),
+  //     );
+  //   }
+
+
+  //   return { result: AuthorizeResult.ALLOW };
+  // }
   }
 }
-
 export default async function createPlugin(
   env: PluginEnvironment,
 ): Promise<Router> {

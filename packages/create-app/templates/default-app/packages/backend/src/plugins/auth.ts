@@ -10,11 +10,7 @@ export default async function createPlugin(
   env: PluginEnvironment,
 ): Promise<Router> {
   return await createRouter({
-    logger: env.logger,
-    config: env.config,
-    database: env.database,
-    discovery: env.discovery,
-    tokenManager: env.tokenManager,
+    ...env,
     providerFactories: {
       ...defaultAuthProviderFactories,
 
@@ -37,13 +33,27 @@ export default async function createPlugin(
       //   https://backstage.io/docs/auth/identity-resolver
       github: providers.github.create({
         signIn: {
-          resolver(_, ctx) {
-            const userRef = 'user:default/guest'; // Must be a full entity reference
-            return ctx.issueToken({
-              claims: {
-                sub: userRef, // The user's own identity
-                ent: [userRef], // A list of identities that the user claims ownership through
-              },
+          resolver: async (info, ctx) => {
+            // const userRef = 'user:default/guest'; // Must be a full entity reference
+            const { profile: { email }, } = info;
+            
+            // Profiles are not always guaranteed to to have an email address.
+            // You can also find more provider-specific information in `info.result`.
+            // It typically contains a `fullProfile` object as well as ID and/or access
+            // tokens that you can use for additional lookups.
+            if (!email) {
+              throw new Error('User profile contained no email');
+            }
+            // This example resolver simply uses the local part of the email as the name.
+            const [name] = email.split('@');
+
+            // This helper function handles sign-in by looking up a user in the catalog.
+            // The lookup can be done either by reference, annotations, or custom filters.
+            //
+            // The helper also issues a token for the user, using the standard group
+            // membership logic to determine the ownership references of the user.
+            return ctx.signInWithCatalogUser({
+              entityRef: { name },
             });
           },
           // resolver: providers.github.resolvers.usernameMatchingUserEntityName(),

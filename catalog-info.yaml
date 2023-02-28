@@ -21,3 +21,42 @@ spec:
   type: library
   owner: CNCF
   lifecycle: experimental
+
+# ---
+
+# apiVersion: backstage.io/v1alpha1
+# kind: User
+# metadata:
+#   name: gyaakov
+# spec:
+#   profile:
+#     displayName: Guy Yaakov
+#     email: guyyaakov1@gmail.com
+#     picture: https://img.icons8.com/ios11/600/000000/naruto-sign.png
+#   memberOf: [team-a, employees]
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: guyyaakov1
+spec:
+  profile:
+    displayName: Guy Yaakov
+    email: guyyaakov1@gmail.com
+    picture: https://img.icons8.com/ios11/600/000000/naruto-sign.png
+  memberOf: [team-a, employees]
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: Jiraya
+spec:
+  profile:
+    displayName: Minato Naruto
+    email: konoha@gmail.com
+    picture: https://img.icons8.com/ios11/600/000000/naruto-sign.png
+  memberOf: [team-a, employees]

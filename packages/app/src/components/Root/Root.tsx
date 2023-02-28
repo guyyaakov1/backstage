@@ -157,6 +157,7 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
         <SidebarDivider />
         <SidebarScrollWrapper>
           <SidebarItem icon={MapIcon} to="tech-radar" text="Tech Radar" />
+          <SidebarItem icon={MapIcon} to="nnewtestplugin" text="Test Plugin" />
           <SidebarItem icon={RuleIcon} to="lighthouse" text="Lighthouse" />
           <SidebarItem
             icon={MoneyIcon}

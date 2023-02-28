@@ -43,6 +43,7 @@
     "@backstage/plugin-lighthouse": "workspace:^",
     "@backstage/plugin-newrelic": "workspace:^",
     "@backstage/plugin-newrelic-dashboard": "workspace:^",
+    "@backstage/plugin-nnewtestplugin": "^0.0.0",
     "@backstage/plugin-org": "workspace:^",
     "@backstage/plugin-pagerduty": "workspace:^",
     "@backstage/plugin-permission-react": "workspace:^",
