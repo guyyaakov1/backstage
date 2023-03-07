@@ -181,3 +181,15 @@ spec:
   type: library
   owner: user:guyyaakov1
   lifecycle: experimental
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: workenechy
+spec:
+  profile:
+    displayName: Mudit Maheshwari
+    email: workenechy@gmail.com
+    picture: https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Red_Hat_logo.svg/2560px-Red_Hat_logo.svg.png
+  memberOf: [team-b]
